@@ -6,10 +6,18 @@ import hu.multipledatasource.model.Data2.DataPart2;
 import hu.multipledatasource.model.Data3.DataPart3;
 import hu.multipledatasource.service.AssemblerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.sql.DataSource;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +27,12 @@ public class AssemblerController {
     @Autowired
     AssemblerService assembleService;
 
+    @Autowired
+    @Qualifier("data1DataSource")
+    DataSource data1DataSource;
+
     @GetMapping("/getAllId")
-    public List<Long> getAllIds(){
+    public List<Long> getAllIds() {
         return assembleService.getAllIds();
     }
 
@@ -33,7 +45,7 @@ public class AssemblerController {
     }
 
     @PostMapping("/upload")
-    public DataPart1 upload(@RequestPart("file") MultipartFile file){
+    public DataPart1 upload(@RequestPart("file") MultipartFile file) {
 
         byte[] fileByteArr;
         try {
@@ -43,7 +55,7 @@ public class AssemblerController {
         }
 
         List<Byte> list = new ArrayList<>();
-        for(int i = 0; i < fileByteArr.length; i++){
+        for (int i = 0; i < fileByteArr.length; i++) {
             list.add(fileByteArr[i]);
         }
 
@@ -52,15 +64,15 @@ public class AssemblerController {
         int listSize3 = fileByteArr.length - listSize1 - listSize2;
 
         byte[] part1 = new byte[listSize1];
-        for(int i = 0; i < listSize1; i++){
+        for (int i = 0; i < listSize1; i++) {
             part1[i] = fileByteArr[i];
         }
         byte[] part2 = new byte[listSize2];
-        for(int i = listSize1, j =0; i < (listSize1 + listSize2); i++, j++){
+        for (int i = listSize1, j = 0; i < (listSize1 + listSize2); i++, j++) {
             part2[j] = fileByteArr[i];
         }
         byte[] part3 = new byte[listSize3];
-        for(int i = listSize1+listSize2, j = 0; i < listSize1+listSize2+listSize3; i++, j++){
+        for (int i = listSize1 + listSize2, j = 0; i < listSize1 + listSize2 + listSize3; i++, j++) {
             part3[j] = fileByteArr[i];
         }
 
@@ -76,5 +88,27 @@ public class AssemblerController {
         DataPart1 upload = assembleService.upload(dataPart1, dataPart2, dataPart3);
         upload.setPart1(null);
         return upload;
+    }
+
+    @GetMapping("getDb1Status")
+    public boolean getDBStatus() {
+        try {
+
+            // db1
+            DriverManagerDataSource dataSource = new DriverManagerDataSource();
+            dataSource.setDriverClassName("org.postgresql.Driver");
+            dataSource.setUrl("jdbc:postgresql://localhost:7754/postgres");
+            dataSource.setUsername("postgres");
+            dataSource.setPassword("pw");
+
+            Connection connection = dataSource.getConnection();
+            boolean valid = connection.isValid(10000);
+            connection.close();
+
+            return valid;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

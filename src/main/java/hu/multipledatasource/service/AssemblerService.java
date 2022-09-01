@@ -45,8 +45,11 @@ public class AssemblerService {
             System.out.println("\n----------------");
             throw new RuntimeException(e);
         }finally {
-            data3Jdbc.setDataSource(null);
-
+            try {
+                data3Connection.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             System.out.println("sat null datasource");
         }
 
