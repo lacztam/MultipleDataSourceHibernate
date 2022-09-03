@@ -1,5 +1,11 @@
 package hu.multipledatasource;
 
+import hu.multipledatasource.config.CanModifyData;
+import hu.multipledatasource.model.Data1.DataPart1;
+import hu.multipledatasource.model.Data2.DataPart2;
+import hu.multipledatasource.model.Data3.DataPart3;
+import hu.multipledatasource.service.DataService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,14 +13,29 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class MultipleDataSourceHibernateApplication implements CommandLineRunner {
 
+    @Autowired DataService assemblerService;
+    @Autowired static CanModifyData canUploadData;
+
     public static void main(String[] args)  {
         SpringApplication.run(MultipleDataSourceHibernateApplication.class, args);
     }
 
     @Override
     public void run(String... args) throws Exception {
+        System.out.println("canUploadData.canUpload: " + canUploadData.isCanModify());
 
-// creating database schemas manually
+        // test data for creating db schema
+        DataPart1 dataPart1 = new DataPart1();
+        dataPart1.setName("test");
+        assemblerService.saveDataPart1(dataPart1);
+
+        DataPart2 dataPart2 = new DataPart2();
+        assemblerService.saveDataPart2(dataPart2);
+
+        DataPart3 dataPart3 = new DataPart3();
+        assemblerService.saveDataPart3(dataPart3);
+
+// generate database schemas manually
  /*
         Map<String, String> settings = new HashMap<>();
         settings.put("hibernate.connection.driver_class", "org.postgresql.Driver");

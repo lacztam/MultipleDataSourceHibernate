@@ -1,20 +1,16 @@
 package hu.multipledatasource.model.Data2;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
+//@Table(name = "data_part2",schema="file_data")
 public class DataPart2 {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long dataPart1Id;
-    private String name;
-
-    private byte[] part2;
+    private byte[] part2Binaries;
 
     public DataPart2() {
     }
@@ -35,19 +31,11 @@ public class DataPart2 {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public byte[] getPart2Binaries() {
+        return part2Binaries;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public byte[] getPart2() {
-        return part2;
-    }
-
-    public void setPart2(byte[] part2) {
-        this.part2 = part2;
+    public void setPart2Binaries(byte[] part2) {
+        this.part2Binaries = part2;
     }
 }

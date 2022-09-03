@@ -9,7 +9,6 @@ import java.util.Optional;
 
 public interface DataPart1Repository extends JpaRepository<DataPart1, Long> {
 
-
     @Query("SELECT distinct d.id " +
             "FROM DataPart1 d")
     Optional<List<Long>> getAllIds();

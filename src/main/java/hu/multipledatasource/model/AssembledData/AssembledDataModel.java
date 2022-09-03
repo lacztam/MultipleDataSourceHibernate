@@ -1,18 +1,18 @@
-package hu.multipledatasource.model.Data1;
+package hu.multipledatasource.model.AssembledData;
 
 import javax.persistence.*;
 
+//Assembled data
 @Entity
-//@Table(name = "data_part1",schema="file_data")
-public class DataPart1 {
+public class AssembledDataModel {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private byte[] dataBinaries;
 
-    private byte[] part1Binaries;
-
-    public DataPart1() {
+    public AssembledDataModel() {
     }
 
     public Long getId() {
@@ -31,11 +31,11 @@ public class DataPart1 {
         this.name = name;
     }
 
-    public byte[] getPart1Binaries() {
-        return part1Binaries;
+    public byte[] getDataBinaries() {
+        return dataBinaries;
     }
 
-    public void setPart1Binaries(byte[] part1) {
-        this.part1Binaries = part1;
+    public void setDataBinaries(byte[] dataBinaries) {
+        this.dataBinaries = dataBinaries;
     }
 }
