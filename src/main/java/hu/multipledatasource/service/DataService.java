@@ -1,6 +1,7 @@
 package hu.multipledatasource.service;
 
 import hu.multipledatasource.config.CanModifyData;
+import hu.multipledatasource.config.LobDirectoryConfig;
 import hu.multipledatasource.model.AssembledData.AssembledDataModel;
 import hu.multipledatasource.model.Data1.DataPart1;
 import hu.multipledatasource.model.Data2.DataPart2;
@@ -13,14 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.sql.DataSource;
-import javax.transaction.Transactional;
 import java.io.IOException;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +39,7 @@ public class DataService {
     JdbcTemplate data3Jdbc;
     @Autowired CanModifyData canUploadData;
     @Lazy @Autowired DataBaseService dataBaseService;
+    @Autowired LobDirectoryConfig lobDirectoryConfig;
 
     public AssembledDataModel assembleData(long dataPart1ID) {
         boolean checkThatAllDbsIsUp = dataBaseService.checkThatAllDbsIsUp();
