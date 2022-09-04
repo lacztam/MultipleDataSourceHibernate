@@ -14,14 +14,17 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.hibernate.tool.schema.TargetType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.annotation.PostConstruct;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 @SpringBootApplication
 public class MultipleDataSourceHibernateApplication implements CommandLineRunner {
@@ -30,8 +33,19 @@ public class MultipleDataSourceHibernateApplication implements CommandLineRunner
     @Autowired CanModifyData canUploadData;
     @Autowired LobService lobService;
 
+    private static ConfigurableApplicationContext context;
+
     public static void main(String[] args)  {
-        SpringApplication.run(MultipleDataSourceHibernateApplication.class, args);
+        SpringApplication springApplication = new SpringApplication(MultipleDataSourceHibernateApplication.class);
+
+/*        Properties properties = new Properties();
+        properties.put("spring.datasource.lob.url", "jdbc:postgresql://localhost:7758/postgres");
+        properties.put("spring.datasource.lob.username", "postgres");
+        properties.put("spring.datasource.lob.password", "pw");
+        properties.put("spring.datasource.lob.driver-class-name", "org.postgresql.Driver");
+        springApplication.setDefaultProperties(properties);*/
+
+        springApplication.run(args);
     }
 
     @Override
@@ -61,8 +75,8 @@ public class MultipleDataSourceHibernateApplication implements CommandLineRunner
     }
 
     public void createSchemaManually(){
-        // generate database schemas manually
 
+        // generate database schemas manually
         Map<String, String> settings = new HashMap<>();
         settings.put("hibernate.connection.driver_class", "org.postgresql.Driver");
         settings.put("hibernate.connection.url", "jdbc:postgresql://localhost:7754/postgres");
@@ -85,6 +99,18 @@ public class MultipleDataSourceHibernateApplication implements CommandLineRunner
         schemaExport.setFormat(true);
         schemaExport.setOutputFile("create.sql");
         schemaExport.createOnly(EnumSet.of(TargetType.SCRIPT), metadata);
+    }
+
+    public static void restartApplication() {
+        ApplicationArguments args = context.getBean(ApplicationArguments.class);
+
+        Thread thread = new Thread(() -> {
+            context.close();
+            context = SpringApplication.run(MultipleDataSourceHibernateApplication.class, args.getSourceArgs());
+        });
+
+        thread.setDaemon(false);
+        thread.start();
     }
 
 

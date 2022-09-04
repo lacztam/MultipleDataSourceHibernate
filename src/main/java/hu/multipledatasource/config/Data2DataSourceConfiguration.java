@@ -33,6 +33,8 @@ public class Data2DataSourceConfiguration {
     @Bean(name = "data2DataSource")
     @ConfigurationProperties("spring.datasource.data2.configuration")
     public DataSource data2DataSource() {
+
+
         return data2DataSourceProperties().initializeDataSourceBuilder()
                 .type(HikariDataSource.class).build();
     }
